@@ -100,7 +100,8 @@ USE_L10N = True
 USE_TZ = True
 
 from mongoengine import connect
-connect('kaola')
+connect('blog', host='mongodb', port=27017)
+
 
 
 # Static files (CSS, JavaScript, Images)
