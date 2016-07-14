@@ -8,6 +8,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from models import GoodsDocument
 from serializers import GoodsSerializer
+import time
 
 class JSONResponse(HttpResponse):
     """
@@ -55,3 +56,10 @@ def detail(request, pk):
     elif request.method == 'DELETE':
         snippet.delete()
         return HttpResponse(status=204)
+
+@csrf_exempt
+def test(request):
+    if request.method == 'GET':
+        res = {'time':time.time()}
+        return JSONResponse(res)
+

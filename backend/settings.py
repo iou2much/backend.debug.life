@@ -39,12 +39,26 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_mongoengine',
+    'corsheaders',
     'api',
-
 )
+
+#    'wechat',
+#    'wechat_member',
+#WECHAT_APPID = 'wx9c6ff8a2bdabc6d0'
+#WECHAT_APPSECRET = '02010562b0c3924910ae09bdbf1a3981'
+#WECHAT_TOKEN = 'c79b03768d144eccb3f7af8a16642d0b'
+#WECHAT_MCH_ID = 'test'
+#WECHAT_KEY = 'X2yq8rC8EnE6iQXMARpRkHkA36KhoF7UQaVX4SfBEmz'
+#WECHAT_JS_DEBUG = 'test'
+#WECHAT_JS_APILIST = ['test']
+#WECHAT_DOMAIN='weixin.qq.com'
+
+ADMIN_ENABLED = False
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -103,6 +117,11 @@ from mongoengine import connect
 connect('blog', host='mongodb', port=27017)
 
 
+#CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_WHITELIST=(
+  'www.debug.life',
+  'debug.life',
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

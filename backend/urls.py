@@ -16,8 +16,12 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+#    url(r'^admin/', include(admin.site.urls)),
+#    url(r'^wx_member/', include('wechat_member.urls', namespace='wx_member')),
+#    url(r'^wx/', include('wechat.urls')),
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('api.urls')),
+    url(r'^api/$', 'list'),
+    url(r'^api/test/$', 'test'),
 
 ]
