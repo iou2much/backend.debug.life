@@ -11,9 +11,6 @@ from serializers import GoodsSerializer
 import time
 
 class JSONResponse(HttpResponse):
-    """
-    将内容转为JSON格式的HttpResponse
-    """
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
@@ -63,3 +60,11 @@ def test(request):
         res = {'time':time.time()}
         return JSONResponse(res)
 
+@csrf_exempt
+def is_login(request):
+    if request.method == 'GET':
+        if request.user.is_authenticated():
+            res = {'code':0,'username':request.user.username}
+            return JSONResponse(res)
+    res = {'code':1}
+    return JSONResponse(res)

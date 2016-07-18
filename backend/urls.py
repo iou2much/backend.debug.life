@@ -21,7 +21,8 @@ from django.contrib import admin
 #    url(r'^wx/', include('wechat.urls')),
 urlpatterns = [
     url(r'^', include('api.urls')),
-    url(r'^api/$', 'list'),
+    url(r'^', include('github.urls')),
+#    url(r'^api/$', 'list'),
     url(r'^api/test/$', 'test'),
 
 ]
