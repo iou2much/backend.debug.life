@@ -15,6 +15,17 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+GITHUB_CLIENTID = '275e6983afb5c592b502'
+GITHUB_CLIENTSECRET = 'f48622dffd137c25121385fdeb6bdbb60a4710dc'
+GITHUB_CALLBACK = 'https://api.debug.life/github/'
+SESSION_COOKIE_DOMAIN=".debug.life"
+SESSION_COOKIE_NAME = 'debuglifesessionid'
+
+CSRF_COOKIE_SECURE=False
+
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -23,9 +34,33 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 's91hp9m_6%9zu_fa11i(yp!-^44g+-1=0%^j^9%m=54kl7h7--'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+#DEBUG = True
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+
+AUTHENTICATION_BACKENDS = (
+    'django_mongoengine.mongo_auth.backends.MongoEngineBackend',
+)
+
+SESSION_ENGINE = 'django_mongoengine.sessions'
+SESSION_SERIALIZER = 'django_mongoengine.sessions.BSONSerializer'
+
+#SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
+
+MONGODB_DATABASES = {
+    "default": {
+        "name": 'blog',
+        "host": 'mongodb',
+#        "password": database_password,
+#        "username": database_user,
+        "tz_aware": True, # if you using timezones in django (USE_TZ = True)
+    },
+}
+
+
 
 
 # Application definition
@@ -37,10 +72,16 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_mongoengine',
+    'django_mongoengine.mongo_auth',
+    'django_mongoengine.mongo_admin.sites',
     'rest_framework',
     'rest_framework_mongoengine',
     'corsheaders',
     'api',
+    'docker',
+    'github',
 )
 
 #    'wechat',
@@ -60,20 +101,23 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+#    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'backend.urls'
 
+# '/notebooks/github/templates',  
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'github/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,6 +129,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
@@ -114,14 +159,34 @@ USE_L10N = True
 USE_TZ = True
 
 from mongoengine import connect
-connect('blog', host='mongodb', port=27017)
+connect('blog', host='mongodb', port=27017,alias='default')
+connect('crawler', host='mongodb', port=27017,alias='crawler')
 
 
-#CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL=False
+CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST=(
   'www.debug.life',
   'debug.life',
 )
+CORS_ALLOW_METHODS = (
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+)
+
+CORS_ALLOW_HEADERS = (
+    'x-requested-with',
+    'content-type',
+    'accept',
+    'origin',
+    'authorization',
+    'x-csrftoken'
+)
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

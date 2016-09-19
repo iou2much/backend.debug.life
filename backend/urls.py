@@ -22,7 +22,8 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^', include('api.urls')),
     url(r'^', include('github.urls')),
+    url(r'^', include('docker_api.urls')),
 #    url(r'^api/$', 'list'),
-    url(r'^api/test/$', 'test'),
+#    url(r'^api/test/$', 'test'),
 
 ]

@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.shortcuts import render
+import time, hmac, hashlib, json
 
 # Create your views here.
 from django.http import HttpResponse
@@ -68,3 +69,34 @@ def is_login(request):
             return JSONResponse(res)
     res = {'code':1}
     return JSONResponse(res)
+
+@csrf_exempt
+def crawl(request):
+    if request.method == 'GET':
+        if request.user.is_authenticated():
+            res = {'code':0,'username':request.user.username}
+            return JSONResponse(res)
+    res = {'code':1}
+    return JSONResponse(res)
+
+@csrf_exempt
+def auth_gateone(request):
+    postData = JSONParser().parse(request)
+    if 'username' not in postData:
+        username = "guest"
+    else:
+        username = postData['username']
+
+    secret = "YjlkNjM1OGIxNmQ1NGU2ZDk4NGY5MDJiMmJkNDc1YzNiN"
+    authobj = {
+        'api_key': "NzkyMGFmZmUwYjU3NDA3NzgyMzNmYjc0Yjk1MmQ3MDk2N",
+        'upn': username,
+        'timestamp': str(int(time.time() * 1000)),
+        'signature_method': 'HMAC-SHA1',
+        'api_version': '1.0'
+    }
+    hash = hmac.new(secret, digestmod=hashlib.sha1)
+    hash.update(authobj['api_key'] + authobj['upn'] + authobj['timestamp'])
+    authobj['signature'] = hash.hexdigest()
+    #valid_json_auth_object = json.dumps(authobj)
+    return JSONResponse(authobj)
